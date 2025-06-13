@@ -392,6 +392,89 @@
             opacity: 0.5;
         }
 
+        .subscription-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        .modal-text {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .primary-btn {
+            background-color: #1c7ed6;
+            color: white;
+            border: none;
+        }
+
+        .primary-btn:hover {
+            background-color: #1971c2;
+        }
+
+        .secondary-btn {
+            background-color: transparent;
+            border: 1px solid #adb5bd;
+            color: #495057;
+        }
+
+        .secondary-btn:hover {
+            background-color: #f1f3f5;
+        }
+
+        .search-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #495057;
+        }
+
+        .input-card {
+            position: relative;
+        }
+
         @media (max-width: 768px) {
             .results-grid {
                 grid-template-columns: 1fr;
@@ -401,6 +484,10 @@
             }
             .nav-links {
                 gap: 15px;
+            }
+            .modal-buttons {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -425,6 +512,7 @@
                 </div>
 
                 <div class="input-card">
+                    <div class="search-counter" id="searchCounter">Searches left: 5</div>
                     <div class="drop-zone" id="dropZone">
                         <h3>Check any information</h3>
                         <p>Drag & drop files here or click to browse</p>
@@ -518,6 +606,18 @@
         </div>
     </div>
 
+    <!-- Subscription Modal -->
+    <div class="subscription-modal" id="subscriptionModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Upgrade Required</h2>
+            <p class="modal-text">You've used all 5 of your free searches this month. To continue using TrustGuard's fact-checking services, please subscribe to one of our premium plans.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn primary-btn" id="subscribeNowBtn">Subscribe Now</button>
+                <button class="modal-btn secondary-btn" id="cancelBtn">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // DOM Elements
         const dropZone = document.getElementById('dropZone');
@@ -527,11 +627,16 @@
         const textInput = document.getElementById('textInput');
         const fileInfo = document.getElementById('fileInfo');
         const historyItems = document.getElementById('historyItems');
+        const searchCounter = document.getElementById('searchCounter');
+        const subscriptionModal = document.getElementById('subscriptionModal');
+        const subscribeNowBtn = document.getElementById('subscribeNowBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
         
         // Track if we have input
         let hasInput = false;
         let currentFile = null;
         let history = [];
+        let searchesLeft = 5;
 
         // Result elements
         const accuracyValue = document.getElementById('accuracyValue');
@@ -545,6 +650,7 @@
 
         // Initialize with Analyze button disabled
         analyzeBtn.disabled = true;
+        updateSearchCounter();
 
         // Event Listeners
         dropZone.addEventListener('click', () => {
@@ -598,9 +704,20 @@
             analyzeBtn.disabled = !hasInput;
         }
 
+        // Update search counter display
+        function updateSearchCounter() {
+            searchCounter.textContent = `Searches left: ${searchesLeft}`;
+        }
+
         // Main analysis function
         analyzeBtn.addEventListener('click', async () => {
             if (!hasInput) return;
+            
+            // Check if user has searches left
+            if (searchesLeft <= 0) {
+                showSubscriptionModal();
+                return;
+            }
             
             analyzeBtn.textContent = 'Analyzing...';
             analyzeBtn.disabled = true;
@@ -610,6 +727,14 @@
                 const result = await simulateFactCheck(query);
                 displayResult(result);
                 addToHistory(query, result.accuracy, result.type);
+                
+                // Decrement search counter
+                searchesLeft--;
+                updateSearchCounter();
+                
+                // Save to localStorage
+                localStorage.setItem('trustGuardSearchesLeft', searchesLeft.toString());
+                localStorage.setItem('trustGuardLastSearchDate', new Date().toISOString());
             } catch (error) {
                 console.error("Analysis error:", error);
                 alert("An error occurred during analysis. Please try again.");
@@ -618,6 +743,53 @@
                 analyzeBtn.disabled = !hasInput;
             }
         });
+
+        // Show subscription modal
+        function showSubscriptionModal() {
+            subscriptionModal.style.display = 'flex';
+        }
+
+        // Hide subscription modal
+        function hideSubscriptionModal() {
+            subscriptionModal.style.display = 'none';
+        }
+
+        // Subscription modal buttons
+        subscribeNowBtn.addEventListener('click', () => {
+            hideSubscriptionModal();
+            alert('Subscription page would open here with different plan options');
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            hideSubscriptionModal();
+        });
+
+        // Check if it's a new month to reset search count
+        function checkSearchReset() {
+            const lastSearchDate = localStorage.getItem('trustGuardLastSearchDate');
+            if (lastSearchDate) {
+                const lastDate = new Date(lastSearchDate);
+                const now = new Date();
+                
+                // Reset if it's a new month
+                if (lastDate.getMonth() !== now.getMonth() || lastDate.getFullYear() !== now.getFullYear()) {
+                    searchesLeft = 5;
+                    updateSearchCounter();
+                    localStorage.setItem('trustGuardSearchesLeft', '5');
+                    localStorage.setItem('trustGuardLastSearchDate', now.toISOString());
+                }
+            }
+        }
+
+        // Initialize search count from localStorage
+        function initSearchCount() {
+            const savedSearches = localStorage.getItem('trustGuardSearchesLeft');
+            if (savedSearches) {
+                searchesLeft = parseInt(savedSearches);
+                updateSearchCounter();
+            }
+            checkSearchReset();
+        }
 
         // Simulate fact check (since we don't have a real API)
         async function simulateFactCheck(query) {
@@ -921,6 +1093,7 @@
 
         // Initialize with empty history
         renderHistory();
+        initSearchCount();
     </script>
 </body>
 </html>
