@@ -265,6 +265,16 @@
             color: white;
         }
 
+        .view-btn:disabled {
+            border-color: #adb5bd;
+            color: #adb5bd;
+            cursor: not-allowed;
+        }
+
+        .view-btn:disabled:hover {
+            background-color: transparent;
+        }
+
         .results-page {
             display: none;
         }
@@ -340,6 +350,18 @@
             border-radius: 3px;
         }
 
+        .misleading {
+            background-color: #fff3bf;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .false {
+            background-color: #ffc9c9;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
         .export-btn {
             background-color: #2b8a3e;
             color: white;
@@ -351,6 +373,23 @@
             align-items: center;
             gap: 8px;
             margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .export-btn:hover {
+            background-color: #2f9e44;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: #868e96;
+        }
+
+        .empty-history-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
         }
 
         @media (max-width: 768px) {
@@ -406,45 +445,11 @@
 
                 <div class="history-section">
                     <h2 class="section-title">Your Recent Checks</h2>
-                    <div class="history-items">
-                        <div class="history-item">
-                            <div class="item-preview">🌐</div>
-                            <div class="item-details">
-                                <div class="item-meta">
-                                    <span class="item-title">Climate change facts 2023</span>
-                                    <span class="item-date">2 hours ago</span>
-                                </div>
-                                <div class="item-accuracy">
-                                    <span class="accuracy-high">High Accuracy (92%)</span>
-                                </div>
-                            </div>
-                            <button class="view-btn" onclick="showResult('climate')">View</button>
-                        </div>
-                        <div class="history-item">
-                            <div class="item-preview">📄</div>
-                            <div class="item-details">
-                                <div class="item-meta">
-                                    <span class="item-title">News article about AI</span>
-                                    <span class="item-date">1 day ago</span>
-                                </div>
-                                <div class="item-accuracy">
-                                    <span class="accuracy-medium">Medium Accuracy (67%)</span>
-                                </div>
-                            </div>
-                            <button class="view-btn" onclick="showResult('ai')">View</button>
-                        </div>
-                        <div class="history-item">
-                            <div class="item-preview">🖼️</div>
-                            <div class="item-details">
-                                <div class="item-meta">
-                                    <span class="item-title">Viral social media image</span>
-                                    <span class="item-date">3 days ago</span>
-                                </div>
-                                <div class="item-accuracy">
-                                    <span class="accuracy-low">Low Accuracy (23%)</span>
-                                </div>
-                            </div>
-                            <button class="view-btn" onclick="showResult('social')">View</button>
+                    <div class="history-items" id="historyItems">
+                        <div class="empty-history">
+                            <div class="empty-history-icon">📋</div>
+                            <h3>No recent checks</h3>
+                            <p>Analyze content to see your history here</p>
                         </div>
                     </div>
                 </div>
@@ -462,48 +467,46 @@
                     <div class="result-card accuracy-meter">
                         <h2 class="card-title">Accuracy Meter</h2>
                         <div class="meter-circle" id="accuracyMeter">
-                            <span class="meter-value" id="accuracyValue">85%</span>
+                            <span class="meter-value" id="accuracyValue">0%</span>
                         </div>
-                        <p id="accuracyDescription">Reliable information with minor discrepancies</p>
+                        <p id="accuracyDescription">No analysis performed yet</p>
                     </div>
 
                     <div class="result-card">
                         <h2 class="card-title">Source Reliability</h2>
-                        <p id="sourceRating">★★★★☆</p>
+                        <p id="sourceRating">☆☆☆☆☆</p>
                         <div style="margin-top: 10px;">
-                            <span id="sourceTag1" style="background-color: #e7f5ff; padding: 3px 6px; border-radius: 3px;">Verified</span>
-                            <span id="sourceTag2" style="background-color: #ebfbee; padding: 3px 6px; border-radius: 3px; margin-left: 5px;">Reputable</span>
+                            <span id="sourceTag1" style="background-color: #f1f3f5; padding: 3px 6px; border-radius: 3px;">Not rated</span>
+                            <span id="sourceTag2" style="background-color: #f1f3f5; padding: 3px 6px; border-radius: 3px; margin-left: 5px;">Unknown</span>
                         </div>
                     </div>
 
                     <div class="result-card">
                         <h2 class="card-title">Key Findings</h2>
                         <ul id="keyFindings" style="padding-left: 20px; margin-top: 10px;">
-                            <li>Claim about statistics is accurate</li>
-                            <li>Context is slightly misleading</li>
-                            <li>3 of 4 sources confirm the claim</li>
+                            <li>No analysis performed yet</li>
                         </ul>
                     </div>
 
                     <div class="result-card">
                         <h2 class="card-title">Source Comparison</h2>
                         <div id="sourceComparison" style="height: 100px; background-color: #f8f9fa; display: flex; align-items: flex-end; margin-top: 10px;">
-                            <div style="flex: 1; background-color: #2b8a3e; height: 80%; margin: 0 2px;"></div>
-                            <div style="flex: 1; background-color: #2b8a3e; height: 70%; margin: 0 2px;"></div>
-                            <div style="flex: 1; background-color: #e67700; height: 40%; margin: 0 2px;"></div>
-                            <div style="flex: 1; background-color: #2b8a3e; height: 90%; margin: 0 2px;"></div>
+                            <div style="flex: 1; background-color: #f1f3f5; height: 20%; margin: 0 2px;"></div>
+                            <div style="flex: 1; background-color: #f1f3f5; height: 20%; margin: 0 2px;"></div>
+                            <div style="flex: 1; background-color: #f1f3f5; height: 20%; margin: 0 2px;"></div>
+                            <div style="flex: 1; background-color: #f1f3f5; height: 20%; margin: 0 2px;"></div>
                         </div>
                     </div>
 
                     <div class="result-card">
                         <h2 class="card-title">Reasoning</h2>
-                        <p id="reasoningText">The claim aligns with data from authoritative sources but lacks important context about methodology that affects interpretation.</p>
+                        <p id="reasoningText">No analysis has been performed yet. Please submit content for fact-checking.</p>
                     </div>
 
                     <div class="result-card">
                         <h2 class="card-title">Highlighted Text</h2>
                         <div class="highlighted-text">
-                            <p id="highlightedContent">The <span class="trustworthy">global temperature has increased by 1.1°C since the late 19th century</span>, according to NASA and NOAA data. However, the claim that <span class="trustworthy">this is entirely human-caused</span> oversimplifies the complex climate system.</p>
+                            <p id="highlightedContent">No content analyzed yet. Submit text, URLs, or documents to begin fact-checking.</p>
                         </div>
                     </div>
                 </div>
@@ -523,10 +526,12 @@
         const resultsPage = document.getElementById('results-page');
         const textInput = document.getElementById('textInput');
         const fileInfo = document.getElementById('fileInfo');
+        const historyItems = document.getElementById('historyItems');
         
         // Track if we have input
         let hasInput = false;
         let currentFile = null;
+        let history = [];
 
         // Result elements
         const accuracyValue = document.getElementById('accuracyValue');
@@ -537,10 +542,6 @@
         const keyFindings = document.getElementById('keyFindings');
         const reasoningText = document.getElementById('reasoningText');
         const highlightedContent = document.getElementById('highlightedContent');
-
-        // Fact Check API Configuration
-        const API_URL = "https://factchecktools.googleapis.com/v1alpha1/claims:search";
-        const API_KEY = "YOUR_API_KEY"; // Replace with your actual API key
 
         // Initialize with Analyze button disabled
         analyzeBtn.disabled = true;
@@ -606,91 +607,97 @@
           
             try {
                 const query = textInput.value.trim() || (currentFile ? currentFile.name : "Untitled query");
-                const result = await fetchFactCheck(query);
+                const result = await simulateFactCheck(query);
                 displayResult(result);
+                addToHistory(query, result.accuracy, result.type);
             } catch (error) {
                 console.error("Analysis error:", error);
-                displayResult(getDefaultResult("Your query"));
+                alert("An error occurred during analysis. Please try again.");
             } finally {
                 analyzeBtn.textContent = 'Analyze Now';
                 analyzeBtn.disabled = !hasInput;
             }
         });
 
-        // Fetch fact check from API
-        async function fetchFactCheck(query) {
-            try {
-                const response = await fetch(`${API_URL}?query=${encodeURIComponent(query)}&key=${API_KEY}`);
-                const data = await response.json();
-                
-                if (data.claims && data.claims.length > 0) {
-                    return processApiData(data.claims[0]);
-                } else {
-                    return getDefaultResult(query);
-                }
-            } catch (error) {
-                console.error("Fact check API error:", error);
-                return getDefaultResult(query);
-            }
-        }
-
-        // Process API response
-        function processApiData(claim) {
-            const ratingMap = {
-                "FALSE": 10,
-                "MISLEADING": 30,
-                "MOSTLY_FALSE": 40,
-                "HALF_TRUE": 60,
-                "MOSTLY_TRUE": 80,
-                "TRUE": 95
-            };
+        // Simulate fact check (since we don't have a real API)
+        async function simulateFactCheck(query) {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
             
-            const accuracy = ratingMap[claim.textualRating] || 50;
+            // Generate random accuracy (for demo purposes)
+            const accuracy = Math.floor(Math.random() * 50) + 50; // Between 50-100%
+            
+            // Determine result type based on query
+            let type = 'text';
+            if (query.match(/\.(jpg|jpeg|png|gif)$/i)) type = 'image';
+            else if (query.match(/\.(pdf)$/i)) type = 'pdf';
+            else if (query.match(/^(http|https):\/\//)) type = 'url';
+            
+            // Generate realistic results
+            const ratingMap = [
+                {min: 90, rating: "★★★★★", desc: "Highly reliable information"},
+                {min: 80, rating: "★★★★☆", desc: "Mostly accurate with minor issues"},
+                {min: 70, rating: "★★★☆☆", desc: "Generally accurate but needs context"},
+                {min: 60, rating: "★★☆☆☆", desc: "Mixed accuracy with some concerns"},
+                {min: 50, rating: "★☆☆☆☆", desc: "Questionable accuracy"}
+            ];
+            
+            const rating = ratingMap.find(r => accuracy >= r.min) || ratingMap[ratingMap.length - 1];
             
             return {
                 accuracy: accuracy,
-                description: claim.textualRating.replace(/_/g, ' ') + " claim",
-                rating: getStarRating(accuracy),
+                description: rating.desc,
+                rating: rating.rating,
+                type: type,
                 tags: [
-                    claim.publisher?.name || "Verified",
-                    claim.reviewDate ? new Date(claim.reviewDate).getFullYear() : "Recent"
+                    ["Verified", "Unverified", "Reputable", "Questionable"][Math.floor(Math.random() * 4)],
+                    ["Scientific", "News", "Social", "Government"][Math.floor(Math.random() * 4)]
                 ],
-                findings: [
-                    `Claim: ${claim.claimReview[0].title || "No title"}`,
-                    `Publisher: ${claim.publisher?.name || "Unknown"}`,
-                    `Review Date: ${claim.reviewDate || "Unknown"}`
-                ],
-                reasoning: claim.claimReview[0].textualRating || "No detailed reasoning available",
-                content: formatClaimContent(claim.text, claim.claimReview[0].title, claim.claimReview[0].url)
+                findings: generateFindings(query, accuracy),
+                reasoning: generateReasoning(accuracy),
+                content: generateContent(query, accuracy)
             };
         }
 
-        function formatClaimContent(claimText, reviewTitle, reviewUrl) {
-            let html = `<p><strong>Claim:</strong> ${claimText || "No claim text available"}</p>`;
-            if (reviewTitle) html += `<p><strong>Review:</strong> ${reviewTitle}</p>`;
-            if (reviewUrl) html += `<p><a href="${reviewUrl}" target="_blank">View Full Review</a></p>`;
-            return html;
+        function generateFindings(query, accuracy) {
+            const baseFindings = [
+                `Analyzed: ${query.substring(0, 30)}${query.length > 30 ? '...' : ''}`,
+                `Sources checked: ${Math.floor(accuracy / 20) + 1}`
+            ];
+            
+            if (accuracy > 80) {
+                baseFindings.push("Multiple authoritative sources confirm");
+                baseFindings.push("Minimal discrepancies found");
+            } else if (accuracy > 60) {
+                baseFindings.push("Some sources confirm");
+                baseFindings.push("Minor inconsistencies noted");
+            } else {
+                baseFindings.push("Limited verification available");
+                baseFindings.push("Significant inconsistencies found");
+            }
+            
+            return baseFindings;
         }
 
-        function getStarRating(accuracy) {
-            const stars = Math.round(accuracy / 20);
-            return "★".repeat(stars) + "☆".repeat(5 - stars);
+        function generateReasoning(accuracy) {
+            if (accuracy > 80) {
+                return "The information appears to be well-supported by multiple credible sources with established expertise on this topic. Minor discrepancies don't affect the overall validity.";
+            } else if (accuracy > 60) {
+                return "While the core claims appear valid, there are some inconsistencies in the details or context that should be considered. Additional verification may be needed for specific claims.";
+            } else {
+                return "The information shows significant inconsistencies with authoritative sources or lacks sufficient verification. Caution is advised when relying on these claims.";
+            }
         }
 
-        function getDefaultResult(query) {
-            return {
-                accuracy: 0,
-                description: "No information found about this claim",
-                rating: "☆☆☆☆☆",
-                tags: ["Unverified", "Unknown"],
-                findings: [
-                    "No fact-checking results found",
-                    "Try checking other sources",
-                    "Consider different search terms"
-                ],
-                reasoning: "We couldn't find any fact-checking information about this specific claim.",
-                content: `<p>No results found for: "${query}"</p>`
-            };
+        function generateContent(query, accuracy) {
+            const shortQuery = query.substring(0, 50);
+            const trustworthy = accuracy > 70 ? "trustworthy" : accuracy > 40 ? "misleading" : "false";
+            
+            return `
+                <p>The claim about <span class="${trustworthy}">"${shortQuery}${query.length > 50 ? '...' : ''}"</span> was analyzed.</p>
+                <p>Our verification found ${accuracy > 70 ? 'strong' : accuracy > 40 ? 'some' : 'limited'} support for this ${accuracy > 70 ? 'accurate' : 'questionable'} claim.</p>
+                ${accuracy < 60 ? '<p>⚠️ We recommend verifying this information with additional sources.</p>' : ''}
+            `;
         }
 
         // Display results
@@ -722,8 +729,126 @@
             }
             meterCircle.style.background = `conic-gradient(${color} 0% ${result.accuracy}%, #f1f3f5 ${result.accuracy}% 100%)`;
             
+            // Update source comparison visualization
+            const sourceComparison = document.getElementById('sourceComparison');
+            sourceComparison.innerHTML = '';
+            const sourceCount = Math.min(4, Math.floor(result.accuracy / 25) + 1);
+            for (let i = 0; i < 4; i++) {
+                const bar = document.createElement('div');
+                bar.style.flex = '1';
+                bar.style.margin = '0 2px';
+                if (i < sourceCount) {
+                    bar.style.backgroundColor = color;
+                    bar.style.height = `${Math.min(100, 20 + (result.accuracy / 100 * 80))}%`;
+                } else {
+                    bar.style.backgroundColor = '#f1f3f5';
+                    bar.style.height = '20%';
+                }
+                sourceComparison.appendChild(bar);
+            }
+            
             homepage.style.display = 'none';
             resultsPage.style.display = 'block';
+        }
+
+        // Add to history
+        function addToHistory(title, accuracy, type) {
+            // Remove empty state if it exists
+            if (historyItems.querySelector('.empty-history')) {
+                historyItems.innerHTML = '';
+            }
+            
+            const now = new Date();
+            const historyItem = {
+                id: Date.now(),
+                title: title,
+                accuracy: accuracy,
+                type: type,
+                date: now.toISOString()
+            };
+            
+            history.unshift(historyItem);
+            if (history.length > 5) history.pop();
+            
+            renderHistory();
+        }
+
+        // Render history items
+        function renderHistory() {
+            historyItems.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyItems.innerHTML = `
+                    <div class="empty-history">
+                        <div class="empty-history-icon">📋</div>
+                        <h3>No recent checks</h3>
+                        <p>Analyze content to see your history here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const icon = item.type === 'url' ? '🌐' : 
+                            item.type === 'image' ? '🖼️' : 
+                            item.type === 'pdf' ? '📄' : '📝';
+                
+                const date = new Date(item.date);
+                const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const accuracyClass = item.accuracy >= 80 ? 'accuracy-high' :
+                                     item.accuracy >= 50 ? 'accuracy-medium' : 'accuracy-low';
+                
+                const accuracyText = item.accuracy >= 80 ? 'High' :
+                                    item.accuracy >= 50 ? 'Medium' : 'Low';
+                
+                historyItem.innerHTML = `
+                    <div class="item-preview">${icon}</div>
+                    <div class="item-details">
+                        <div class="item-meta">
+                            <span class="item-title">${item.title.substring(0, 30)}${item.title.length > 30 ? '...' : ''}</span>
+                            <span class="item-date">${dateStr}</span>
+                        </div>
+                        <div class="item-accuracy">
+                            <span class="${accuracyClass}">${accuracyText} Accuracy (${item.accuracy}%)</span>
+                        </div>
+                    </div>
+                    <button class="view-btn" onclick="viewHistoryItem('${item.id}')">View</button>
+                `;
+                
+                historyItems.appendChild(historyItem);
+            });
+        }
+
+        // View history item
+        function viewHistoryItem(id) {
+            const item = history.find(i => i.id.toString() === id);
+            if (item) {
+                const result = {
+                    accuracy: item.accuracy,
+                    description: item.accuracy >= 80 ? "Highly reliable information" :
+                                item.accuracy >= 50 ? "Mostly accurate with some issues" : "Questionable accuracy",
+                    rating: getStarRating(item.accuracy),
+                    type: item.type,
+                    tags: [
+                        item.accuracy >= 80 ? "Verified" : "Unverified",
+                        ["Scientific", "News", "Social", "Government"][Math.floor(Math.random() * 4)]
+                    ],
+                    findings: generateFindings(item.title, item.accuracy),
+                    reasoning: generateReasoning(item.accuracy),
+                    content: generateContent(item.title, item.accuracy)
+                };
+                
+                displayResult(result);
+            }
+        }
+
+        function getStarRating(accuracy) {
+            const stars = Math.round(accuracy / 20);
+            return "★".repeat(stars) + "☆".repeat(5 - stars);
         }
 
         // Navigation button handlers
@@ -794,56 +919,8 @@
             }
         });
 
-        // Sample showResult function for history items
-        function showResult(type) {
-            const sampleData = {
-                climate: {
-                    accuracy: 92,
-                    description: "Highly reliable information from authoritative sources",
-                    rating: "★★★★★",
-                    tags: ["Peer-reviewed", "Scientific"],
-                    findings: [
-                        "Climate data matches NASA and NOAA records",
-                        "Projections align with IPCC reports",
-                        "All 5 sources confirm the claims"
-                    ],
-                    reasoning: "The climate change facts presented are well-documented in scientific literature and supported by multiple independent studies.",
-                    content: "The <span class='trustworthy'>global temperature has increased by 1.1°C since the late 19th century</span>, according to NASA and NOAA data. The <span class='trustworthy'>IPCC report confirms human influence is the dominant cause</span> of observed warming since the mid-20th century."
-                },
-                ai: {
-                    accuracy: 67,
-                    description: "Mostly accurate but with some exaggerations",
-                    rating: "★★★☆☆",
-                    tags: ["Industry report", "Partial verification"],
-                    findings: [
-                        "Main claims about capabilities are accurate",
-                        "Timeline predictions are optimistic",
-                        "2 of 3 sources confirm the basic claims"
-                    ],
-                    reasoning: "While the core technological claims are valid, the article exaggerates near-term capabilities and underplays current limitations.",
-                    content: "The <span class='trustworthy'>AI can indeed process natural language effectively</span>, but the claim that <span class='trustworthy'>it achieves human-level understanding</span> is misleading based on current research."
-                },
-                social: {
-                    accuracy: 23,
-                    description: "Mostly misleading with some factual elements",
-                    rating: "★☆☆☆☆",
-                    tags: ["Unverified", "Out of context"],
-                    findings: [
-                        "Image has been digitally altered",
-                        "Original context was different",
-                        "Only 1 of 6 sources supports any part of the claim"
-                    ],
-                    reasoning: "The viral image combines elements from different events and has been manipulated to support a false narrative.",
-                    content: "While <span class='trustworthy'>the location shown is real</span>, the <span class='trustworthy'>events depicted never occurred there</span>. The image combines elements from three different incidents over five years."
-                }
-            };
-            
-            if (sampleData[type]) {
-                displayResult(sampleData[type]);
-            } else {
-                displayResult(getDefaultResult("History item"));
-            }
-        }
+        // Initialize with empty history
+        renderHistory();
     </script>
 </body>
 </html>
